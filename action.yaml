@@ -1,0 +1,35 @@
+name: "Build Docker Image"
+description: "Builds a docker image for Smile. Must be run on internal runners with the `category-applications` label."
+inputs:
+  docker_repo_url:
+    description: "URL of the docker repo where images will be uploaded."
+    required: true
+  tag_prefix:
+    description: "Images will be tagged with the git SHA1, optionally prefixed by this value."
+    required: false
+outputs:
+  image:
+    description: "Full path to the image created."
+    value: ${{ steps.record_image.outputs.image }}
+  tag:
+    description: "Tag of the image created."
+    value: ${{ steps.record_image.outputs.tag }}
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build and Upload Docker Image
+      id: build-docker
+      shell: bash
+      run: build-docker-image
+              --docker-image-name "${{ inputs.docker_repo_url }}"
+              --docker-image-tag "${{ inputs.tag_prefix}}${{ github.sha }}"
+              --build-arg BUNDLE_ENTERPRISE__CONTRIBSYS__COM="$BUNDLE_ENTERPRISE__CONTRIBSYS__COM"
+              --build-arg BUNDLE_RUBYGEMS__PKG__GITHUB__COM="$BUNDLE_RUBYGEMS__PKG__GITHUB__COM"
+    - name: Record image details
+      id: record_image
+      shell: bash
+      run: |
+        echo "::set-output name=image::${{ inputs.docker_repo_url }}:${{ inputs.tag_prefix }}${{ github.sha }}"
+        echo "::set-output name=tag::${{ inputs.tag_prefix }}${{ github.sha }}"
