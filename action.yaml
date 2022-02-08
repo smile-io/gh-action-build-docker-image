@@ -7,6 +7,9 @@ inputs:
   tag_prefix:
     description: "Images will be tagged with the git SHA1, optionally prefixed by this value."
     required: false
+  additional_args:
+    description: "Additional arguments that will be passed to the `build-docker-image` script, e.g. to define build arguments for the docker image."
+    required: false
 outputs:
   image:
     description: "Full path to the image created."
@@ -25,8 +28,7 @@ runs:
       run: build-docker-image
               --docker-image-name "${{ inputs.docker_repo_url }}"
               --docker-image-tag "${{ inputs.tag_prefix}}${{ github.sha }}"
-              --build-arg BUNDLE_ENTERPRISE__CONTRIBSYS__COM="$BUNDLE_ENTERPRISE__CONTRIBSYS__COM"
-              --build-arg BUNDLE_RUBYGEMS__PKG__GITHUB__COM="$BUNDLE_RUBYGEMS__PKG__GITHUB__COM"
+              ${{ inputs.additional_args }}
     - name: Record image details
       id: record_image
       shell: bash
