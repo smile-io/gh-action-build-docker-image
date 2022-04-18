@@ -25,6 +25,8 @@ runs:
     - name: Build and Upload Docker Image
       id: build-docker
       shell: bash
+      # Note: The build-docker-image script is provided by gruntworks https://github.com/gruntwork-io/terraform-aws-ci/tree/master/modules/build-helpers,
+      #       and it also pushes to the given repo with the given tag
       run: build-docker-image
               --docker-image-name "${{ inputs.docker_repo_url }}"
               --docker-image-tag "${{ inputs.tag_prefix}}${{ github.sha }}"
