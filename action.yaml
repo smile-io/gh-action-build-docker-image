@@ -21,7 +21,7 @@ runs:
   using: "composite"
   steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Build and Upload Docker Image
       id: build-docker
       shell: bash
@@ -33,5 +33,5 @@ runs:
       id: record_image
       shell: bash
       run: |
-        echo "::set-output name=image::${{ inputs.docker_repo_url }}:${{ inputs.tag_prefix }}${{ github.sha }}"
-        echo "::set-output name=tag::${{ inputs.tag_prefix }}${{ github.sha }}"
+        echo "image=${{ inputs.docker_repo_url }}:${{ inputs.tag_prefix }}${{ github.sha }}" >> $GITHUB_OUTPUT
+        echo "tag=${{ inputs.tag_prefix }}${{ github.sha }}" >> $GITHUB_OUTPUT
