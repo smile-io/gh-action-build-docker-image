@@ -22,8 +22,20 @@ runs:
   steps:
     - name: Checkout code
       uses: actions/checkout@v3
+    - name: Validate if Image Exist
+      id: docker_image_validation
+      run: | 
+        REPO_URL=${{ inputs.docker_repo_url }}
+        REPO_NAME="${REPO_URL##*/}"
+        aws ecr describe-images --repository-name $REPO_NAME --image-ids imageTag=${{ inputs.tag_prefix}}${{ github.sha }} --output json --no-cli-pager > /dev/null 2>&1
+        if [ $? -eq 0 ]; then
+            echo "docker_image_exist=true" >> $GITHUB_OUTPUT
+        else
+            echo "docker_image_exist=false" >> $GITHUB_OUTPUT
+        fi
     - name: Build and Upload Docker Image
       id: build-docker
+      if: steps.docker_image_validation.outputs.docker_image_exist == false
       shell: bash
       # Note: The build-docker-image script is provided by gruntworks https://github.com/gruntwork-io/terraform-aws-ci/tree/master/modules/build-helpers,
       #       and it also pushes to the given repo with the given tag
