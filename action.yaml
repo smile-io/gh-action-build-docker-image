@@ -25,7 +25,6 @@ runs:
     - name: Validate if Image Exist
       id: docker_image_validation
       shell: bash
-      continue-on-error: true
       run: | 
         REPO_URL=${{ inputs.docker_repo_url }}
         REPO_NAME="${REPO_URL##*/}"
