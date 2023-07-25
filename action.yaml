@@ -24,6 +24,7 @@ runs:
       uses: actions/checkout@v3
     - name: Validate if Image Exist
       id: docker_image_validation
+      shell: bash
       run: | 
         REPO_URL=${{ inputs.docker_repo_url }}
         REPO_NAME="${REPO_URL##*/}"
